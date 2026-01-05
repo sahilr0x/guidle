@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guidle Demo App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #F9FAFB;
+      min-height: 100vh;
+    }
+
+    /* Navigation */
+    .navbar {
+      background: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1F2937;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-brand span {
+      color: #3B82F6;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: #6B7280;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link:hover {
+      color: #3B82F6;
+    }
+
+    .nav-link svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Icon buttons */
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: #F3F4F6;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      background: #E5E7EB;
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: #6B7280;
+    }
+
+    .icon-btn .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 18px;
+      height: 18px;
+      background: #EF4444;
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Search */
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: #F3F4F6;
+      border-radius: 8px;
+      padding: 8px 12px;
+      gap: 8px;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      width: 200px;
+    }
+
+    .search-box svg {
+      width: 18px;
+      height: 18px;
+      fill: #9CA3AF;
+    }
+
+    /* Avatar */
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      min-height: calc(100vh - 72px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: white;
+      border-right: 1px solid #E5E7EB;
+      padding: 24px 16px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 24px;
+    }
+
+    .sidebar-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #9CA3AF;
+      margin-bottom: 12px;
+      padding: 0 12px;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #4B5563;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .sidebar-link:hover {
+      background: #F3F4F6;
+      color: #1F2937;
+    }
+
+    .sidebar-link.active {
+      background: #EFF6FF;
+      color: #3B82F6;
+    }
+
+    .sidebar-link svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Content Area */
+    .content {
+      flex: 1;
+      padding: 32px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1F2937;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      color: #6B7280;
+      font-size: 16px;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #EFF6FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .card-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: #3B82F6;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1F2937;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      color: #6B7280;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Settings Form */
+    .settings-form {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 600px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3B82F6;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: #3B82F6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563EB;
+    }
+
+    .btn-secondary {
+      background: #F3F4F6;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #E5E7EB;
+    }
+
+    /* Hidden pages */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Profile dropdown */
+    .profile-menu {
+      position: absolute;
+      top: 60px;
+      right: 24px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      min-width: 200px;
+      display: none;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .profile-menu.open {
+      display: block;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: #4B5563;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .profile-menu-item:hover {
+      background: #F3F4F6;
+    }
+
+    .profile-menu-item svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .profile-menu-divider {
+      height: 1px;
+      background: #E5E7EB;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span>🚀</span> DemoApp
+    </div>
+    
+    <div class="nav-links">
+      <a href="#" class="nav-link" data-page="dashboard" data-guidle="home">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Home
+      </a>
+      <a href="#" class="nav-link" data-page="projects" data-guidle="projects">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+        Projects
+      </a>
+      <a href="#" class="nav-link" data-page="team" data-guidle="team">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Team
+      </a>
+    </div>
+    
+    <div class="nav-actions">
+      <div class="search-box" data-guidle="search">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" placeholder="Search...">
+      </div>
+      
+      <button class="icon-btn" id="notifications-btn" data-guidle="notifications" aria-label="Notifications">
+        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        <span class="badge">3</span>
+      </button>
+      
+      <button class="icon-btn" id="settings-btn" data-guidle="settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      </button>
+      
+      <button class="icon-btn" id="help-btn" data-guidle="help" aria-label="Help">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+      </button>
+      
+      <div class="avatar" id="profile-btn" data-guidle="profile">JS</div>
+    </div>
+  </nav>
+
+  <!-- Profile Dropdown Menu -->
+  <div class="profile-menu" id="profile-menu">
+    <div class="profile-menu-item" data-page="profile" data-guidle="my-profile">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      My Profile
+    </div>
+    <div class="profile-menu-item" data-page="settings" data-guidle="account-settings">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      Account Settings
+    </div>
+    <div class="profile-menu-divider"></div>
+    <div class="profile-menu-item" data-guidle="logout">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Logout
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Menu</div>
+        <a class="sidebar-link active" data-page="dashboard" data-guidle="dashboard">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Dashboard
+        </a>
+        <a class="sidebar-link" data-page="analytics" data-guidle="analytics">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+          Analytics
+        </a>
+        <a class="sidebar-link" data-page="messages" data-guidle="messages">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Messages
+        </a>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">Settings</div>
+        <a class="sidebar-link" data-page="settings" data-guidle="settings">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          Settings
+        </a>
+        <a class="sidebar-link" data-page="profile" data-guidle="profile">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          Profile
+        </a>
+      </div>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="content">
+      <!-- Dashboard Page -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Welcome back! Here's what's happening with your projects.</p>
+        </div>
+        
+        <div class="card-grid">
+          <div class="card" data-guidle="stats">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+            </div>
+            <h3 class="card-title">Analytics</h3>
+            <p class="card-desc">View your project analytics and performance metrics.</p>
+          </div>
+          
+          <div class="card" data-guidle="recent-activity">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            </div>
+            <h3 class="card-title">Recent Activity</h3>
+            <p class="card-desc">Check your recent project updates and changes.</p>
+          </div>
+          
+          <div class="card" data-guidle="quick-actions">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+            </div>
+            <h3 class="card-title">Quick Actions</h3>
+            <p class="card-desc">Shortcuts to your most used features.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Page -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <h1 class="page-title">Settings</h1>
+          <p class="page-subtitle">Manage your account settings and preferences.</p>
+        </div>
+        
+        <div class="settings-form">
+          <div class="form-group">
+            <label class="form-label" for="name-input">Display Name</label>
+            <input type="text" id="name-input" class="form-input" data-guidle="name" value="John Smith" placeholder="Your name">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="email-input">Email Address</label>
+            <input type="email" id="email-input" class="form-input" data-guidle="email" value="john@example.com" placeholder="Your email">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="password-input">Password</label>
+            <input type="password" id="password-input" class="form-input" data-guidle="password" placeholder="••••••••">
+          </div>
+          
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-primary" data-guidle="save">Save Changes</button>
+            <button class="btn btn-secondary" data-guidle="cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Page -->
+      <div class="page" id="page-profile">
+        <div class="page-header">
+          <h1 class="page-title">My Profile</h1>
+          <p class="page-subtitle">View and edit your profile information.</p>
+        </div>
+        
+        <div class="card" style="max-width: 500px;">
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+            <div class="avatar" style="width: 80px; height: 80px; font-size: 24px;">JS</div>
+            <div>
+              <h3 style="margin: 0; font-size: 20px; color: #1F2937;">John Smith</h3>
+              <p style="margin: 4px 0 0 0; color: #6B7280;">john@example.com</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" data-guidle="edit-profile">Edit Profile</button>
+        </div>
+      </div>
+
+      <!-- Other pages (simplified) -->
+      <div class="page" id="page-projects">
+        <div class="page-header">
+          <h1 class="page-title">Projects</h1>
+          <p class="page-subtitle">Manage your projects.</p>
+        </div>
+      </div>
+
+      <div class="page" id="page-team">
+        <div class="page-header">
+          <h1 class="page-title">Team</h1>
+          <p class="page-subtitle">Manage your team members.</p>
+        </div>
+      </div>
+
+      <div class="page" id="page-analytics">
+        <div class="page-header">
+          <h1 class="page-title">Analytics</h1>
+          <p class="page-subtitle">View your analytics data.</p>
+        </div>
+      </div>
+
+      <div class="page" id="page-messages">
+        <div class="page-header">
+          <h1 class="page-title">Messages</h1>
+          <p class="page-subtitle">View your messages.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Guidle SDK Integration -->
+  <guidle 
+    server="ws://localhost:3000" 
+    app-id="demo-app"
+    position="bottom-right"
+    voice="true"
+    hotkey="k"
+  ></guidle>
+
+  <script type="module">
+    // Page navigation
+    document.querySelectorAll('[data-page]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        
+        // Show selected page
+        const targetPage = document.getElementById(`page-${page}`);
+        if (targetPage) {
+          targetPage.classList.add('active');
+        }
+        
+        // Update active state in sidebar
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        const sidebarLink = document.querySelector(`.sidebar-link[data-page="${page}"]`);
+        if (sidebarLink) {
+          sidebarLink.classList.add('active');
+        }
+        
+        // Close profile menu if open
+        document.getElementById('profile-menu').classList.remove('open');
+      });
+    });
+
+    // Profile dropdown toggle
+    document.getElementById('profile-btn').addEventListener('click', () => {
+      document.getElementById('profile-menu').classList.toggle('open');
+    });
+
+    // Close profile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#profile-btn') && !e.target.closest('#profile-menu')) {
+        document.getElementById('profile-menu').classList.remove('open');
+      }
+    });
+
+    // Settings button click
+    document.getElementById('settings-btn').addEventListener('click', () => {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-settings').classList.add('active');
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      document.querySelector('.sidebar-link[data-page="settings"]').classList.add('active');
+    });
+
+    // ============ GUIDLE SDK INLINE ============
+    
+    const GUIDLE_CONFIG = {
+      serverUrl: 'ws://localhost:3000',
+      appId: 'demo-app',
+      position: 'bottom-right',
+      voiceEnabled: true
+    };
+
+    const DEFAULT_THEME = {
+      primaryColor: '#3B82F6',
+      backgroundColor: '#FFFFFF',
+      textColor: '#1F2937',
+      overlayColor: 'rgba(0, 0, 0, 0.5)',
+      highlightColor: '#3B82F6',
+      borderRadius: '12px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    };
+
+    // Inject styles
+    const guidleStyles = document.createElement('style');
+    guidleStyles.textContent = `
+      .guidle-widget {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 99990;
+        font-family: ${DEFAULT_THEME.fontFamily};
+      }
+
+      .guidle-fab {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: ${DEFAULT_THEME.primaryColor};
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      .guidle-fab:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 30px rgba(59, 130, 246, 0.5);
+      }
+
+      .guidle-fab svg {
+        width: 28px;
+        height: 28px;
+        fill: white;
+      }
+
+      .guidle-panel {
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        width: 380px;
+        max-height: 500px;
+        background: ${DEFAULT_THEME.backgroundColor};
+        border-radius: ${DEFAULT_THEME.borderRadius};
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        animation: guidle-slideUp 0.3s ease;
+      }
+
+      .guidle-panel.open {
+        display: flex;
+      }
+
+      @keyframes guidle-slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .guidle-header {
+        padding: 20px;
+        background: linear-gradient(135deg, ${DEFAULT_THEME.primaryColor}, #1D4ED8);
+        color: white;
+      }
+
+      .guidle-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .guidle-header p {
+        margin: 8px 0 0 0;
+        font-size: 13px;
+        opacity: 0.9;
+      }
+
+      .guidle-messages {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        min-height: 150px;
+        max-height: 250px;
+      }
+
+      .guidle-message {
+        margin-bottom: 12px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .guidle-message.assistant {
+        background: #F3F4F6;
+        color: ${DEFAULT_THEME.textColor};
+      }
+
+      .guidle-message.user {
+        background: ${DEFAULT_THEME.primaryColor};
+        color: white;
+        margin-left: 40px;
+      }
+
+      .guidle-suggestions {
+        padding: 12px 16px;
+        border-top: 1px solid #E5E7EB;
+      }
+
+      .guidle-suggestions-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #9CA3AF;
+        margin-bottom: 8px;
+      }
+
+      .guidle-suggestion {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 4px;
+        background: #F3F4F6;
+        border-radius: 20px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+      }
+
+      .guidle-suggestion:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: ${DEFAULT_THEME.primaryColor};
+        color: ${DEFAULT_THEME.primaryColor};
+      }
+
+      .guidle-input-container {
+        padding: 16px;
+        border-top: 1px solid #E5E7EB;
+        display: flex;
+        gap: 8px;
+      }
+
+      .guidle-input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px solid #E5E7EB;
+        border-radius: 24px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+
+      .guidle-input:focus {
+        border-color: ${DEFAULT_THEME.primaryColor};
+      }
+
+      .guidle-send-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: ${DEFAULT_THEME.primaryColor};
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .guidle-send-btn:hover {
+        background: #2563EB;
+      }
+
+      .guidle-send-btn svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+      }
+
+      /* Overlay styles */
+      .guidle-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: ${DEFAULT_THEME.overlayColor};
+        z-index: 99998;
+        pointer-events: none;
+      }
+
+      .guidle-highlight {
+        position: absolute;
+        border: 3px solid ${DEFAULT_THEME.highlightColor};
+        border-radius: 8px;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.4);
+        z-index: 99999;
+        pointer-events: none;
+        animation: guidle-pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes guidle-pulse {
+        0%, 100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.4); }
+        50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2), 0 0 30px rgba(59, 130, 246, 0.5); }
+      }
+
+      .guidle-spotlight {
+        position: absolute;
+        z-index: 99999;
+        pointer-events: auto;
+      }
+
+      .guidle-tooltip {
+        position: absolute;
+        background: white;
+        padding: 12px 16px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        z-index: 100000;
+        max-width: 280px;
+        font-size: 14px;
+      }
+    `;
+    document.head.appendChild(guidleStyles);
+
+    // Create widget HTML
+    const widget = document.createElement('div');
+    widget.className = 'guidle-widget';
+    widget.innerHTML = `
+      <button class="guidle-fab" aria-label="Open Guidle">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
+          <circle cx="12" cy="10" r="2"/>
+        </svg>
+      </button>
+      <div class="guidle-panel">
+        <div class="guidle-header">
+          <h3>🎯 Guidle</h3>
+          <p>Ask me to help you navigate this app</p>
+        </div>
+        <div class="guidle-messages">
+          <div class="guidle-message assistant">
+            👋 Hi! I can help you find anything. Try "go to settings" or "show my profile"
+          </div>
+        </div>
+        <div class="guidle-suggestions">
+          <div class="guidle-suggestions-title">Quick actions</div>
+          <span class="guidle-suggestion" data-query="Go to settings">⚙️ Settings</span>
+          <span class="guidle-suggestion" data-query="Show my profile">👤 Profile</span>
+          <span class="guidle-suggestion" data-query="Open notifications">🔔 Notifications</span>
+        </div>
+        <div class="guidle-input-container">
+          <input type="text" class="guidle-input" placeholder="Ask anything...">
+          <button class="guidle-send-btn">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(widget);
+
+    // State
+    let ws = null;
+    let overlayEl = null;
+    let highlightEls = [];
+
+    // Connect to WebSocket
+    function connect() {
+      ws = new WebSocket(GUIDLE_CONFIG.serverUrl);
+      
+      ws.onopen = () => {
+        console.log('[Guidle] Connected to server');
+        addMessage('Connected! Ready to help.', 'assistant');
+      };
+      
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        handleServerMessage(msg);
+      };
+      
+      ws.onerror = (err) => {
+        console.error('[Guidle] Connection error:', err);
+        addMessage('Connection error. Make sure the backend is running on port 3000.', 'assistant');
+      };
+      
+      ws.onclose = () => {
+        console.log('[Guidle] Disconnected, reconnecting...');
+        setTimeout(connect, 2000);
+      };
+    }
+
+    function handleServerMessage(msg) {
+      console.log('[Guidle] Received:', msg);
+      
+      if (msg.type === 'STEP' && msg.step.type === 'HIGHLIGHT') {
+        highlightElements(msg.step.selectors, msg.step.description);
+      } else if (msg.type === 'DONE' && msg.message) {
+        addMessage(msg.message, 'assistant');
+      } else if (msg.type === 'ERROR') {
+        addMessage('Error: ' + msg.message, 'assistant');
+      }
+    }
+
+    function highlightElements(selectors, description) {
+      clearHighlights();
+      
+      // Create overlay
+      overlayEl = document.createElement('div');
+      overlayEl.className = 'guidle-overlay';
+      document.body.appendChild(overlayEl);
+      
+      // Find element
+      let element = null;
+      for (const sel of selectors) {
+        try {
+          if (sel.includes(':contains(')) {
+            // Handle :contains pseudo-selector
+            const match = sel.match(/(.+):contains\(['"](.+)['"]\)/);
+            if (match) {
+              const elements = document.querySelectorAll(match[1] || '*');
+              for (const el of elements) {
+                if (el.textContent?.toLowerCase().includes(match[2].toLowerCase())) {
+                  element = el;
+                  break;
+                }
+              }
+            }
+          } else {
+            element = document.querySelector(sel);
+          }
+          if (element) break;
+        } catch (e) { continue; }
+      }
+      
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        
+        // Create highlight
+        const highlight = document.createElement('div');
+        highlight.className = 'guidle-highlight';
+        highlight.style.cssText = `
+          top: ${rect.top + window.scrollY - 4}px;
+          left: ${rect.left + window.scrollX - 4}px;
+          width: ${rect.width + 8}px;
+          height: ${rect.height + 8}px;
+        `;
+        document.body.appendChild(highlight);
+        highlightEls.push(highlight);
+        
+        // Scroll into view
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        addMessage(`Found: ${description}`, 'assistant');
+        
+        // Clear on click anywhere
+        setTimeout(() => {
+          document.addEventListener('click', clearHighlights, { once: true });
+        }, 500);
+      } else {
+        addMessage(`Couldn't find ${description} on this page.`, 'assistant');
+        clearHighlights();
+      }
+    }
+
+    function clearHighlights() {
+      overlayEl?.remove();
+      overlayEl = null;
+      highlightEls.forEach(el => el.remove());
+      highlightEls = [];
+    }
+
+    function sendQuery(text) {
+      if (ws?.readyState === WebSocket.OPEN) {
+        addMessage(text, 'user');
+        ws.send(JSON.stringify({ type: 'QUERY', text, appId: GUIDLE_CONFIG.appId }));
+      } else {
+        addMessage('Not connected. Trying to reconnect...', 'assistant');
+        connect();
+      }
+    }
+
+    function addMessage(text, type) {
+      const messages = widget.querySelector('.guidle-messages');
+      const msg = document.createElement('div');
+      msg.className = `guidle-message ${type}`;
+      msg.textContent = text;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // Event listeners
+    widget.querySelector('.guidle-fab').addEventListener('click', () => {
+      widget.querySelector('.guidle-panel').classList.toggle('open');
+    });
+
+    widget.querySelector('.guidle-send-btn').addEventListener('click', () => {
+      const input = widget.querySelector('.guidle-input');
+      if (input.value.trim()) {
+        sendQuery(input.value.trim());
+        input.value = '';
+      }
+    });
+
+    widget.querySelector('.guidle-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        sendQuery(e.target.value.trim());
+        e.target.value = '';
+      }
+    });
+
+    widget.querySelectorAll('.guidle-suggestion').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sendQuery(btn.dataset.query);
+      });
+    });
+
+    // Start connection
+    connect();
+  </script>
+</body>
+</html>
