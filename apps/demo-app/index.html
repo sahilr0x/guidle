@@ -984,11 +984,64 @@
       
       if (msg.type === 'STEP' && msg.step.type === 'HIGHLIGHT') {
         highlightElements(msg.step.selectors, msg.step.description);
+      } else if (msg.type === 'STEP' && msg.step.type === 'VISION_HIGHLIGHT') {
+        // Vision-based highlighting with pixel coordinates
+        highlightVisionElements(msg.step.elements, msg.step.explanation);
       } else if (msg.type === 'DONE' && msg.message) {
         addMessage(msg.message, 'assistant');
       } else if (msg.type === 'ERROR') {
         addMessage('Error: ' + msg.message, 'assistant');
       }
+    }
+
+    // Vision-based highlighting using pixel coordinates
+    function highlightVisionElements(elements, explanation) {
+      clearHighlights();
+      
+      if (!elements || elements.length === 0) {
+        addMessage("Couldn't find any matching elements.", 'assistant');
+        return;
+      }
+
+      // Create overlay
+      overlayEl = document.createElement('div');
+      overlayEl.className = 'guidle-overlay';
+      document.body.appendChild(overlayEl);
+
+      // Highlight each detected element
+      elements.forEach((el, index) => {
+        const highlight = document.createElement('div');
+        highlight.className = 'guidle-highlight';
+        highlight.style.cssText = `
+          top: ${el.y + window.scrollY - 4}px;
+          left: ${el.x + window.scrollX - 4}px;
+          width: ${el.width + 8}px;
+          height: ${el.height + 8}px;
+        `;
+        
+        // Add label tooltip
+        if (el.label) {
+          const label = document.createElement('div');
+          label.className = 'guidle-tooltip';
+          label.style.cssText = `
+            top: ${el.y + window.scrollY + el.height + 10}px;
+            left: ${el.x + window.scrollX}px;
+          `;
+          label.textContent = el.label;
+          document.body.appendChild(label);
+          highlightEls.push(label);
+        }
+        
+        document.body.appendChild(highlight);
+        highlightEls.push(highlight);
+      });
+
+      addMessage(`Found ${elements.length} element(s): ${explanation}`, 'assistant');
+
+      // Clear on click
+      setTimeout(() => {
+        document.addEventListener('click', clearHighlights, { once: true });
+      }, 500);
     }
 
     function highlightElements(selectors, description) {
@@ -1059,13 +1112,53 @@
       highlightEls = [];
     }
 
-    function sendQuery(text) {
-      if (ws?.readyState === WebSocket.OPEN) {
-        addMessage(text, 'user');
-        ws.send(JSON.stringify({ type: 'QUERY', text, appId: GUIDLE_CONFIG.appId }));
-      } else {
+    // Capture screenshot using html2canvas (or native API if available)
+    async function captureScreenshot() {
+      // Hide the widget temporarily
+      widget.style.display = 'none';
+      
+      try {
+        // Try using the native Screen Capture API (requires user permission)
+        // For now, we'll use a simpler approach - just use selector-based matching
+        // In production, you'd use html2canvas or a browser extension
+        
+        // Simulated screenshot capture - in production use html2canvas:
+        // const canvas = await html2canvas(document.body);
+        // return canvas.toDataURL('image/png').split(',')[1];
+        
+        return null; // Return null to fall back to selector-based
+      } finally {
+        widget.style.display = '';
+      }
+    }
+
+    async function sendQuery(text) {
+      if (ws?.readyState !== WebSocket.OPEN) {
         addMessage('Not connected. Trying to reconnect...', 'assistant');
         connect();
+        return;
+      }
+
+      addMessage(text, 'user');
+      
+      // Try vision-based query if we can capture screenshot
+      const screenshot = await captureScreenshot();
+      
+      if (screenshot) {
+        // Send vision query with screenshot
+        ws.send(JSON.stringify({ 
+          type: 'VISION_QUERY', 
+          text, 
+          screenshot,
+          viewport: {
+            width: window.innerWidth,
+            height: window.innerHeight
+          },
+          appId: GUIDLE_CONFIG.appId 
+        }));
+      } else {
+        // Fall back to selector-based query
+        ws.send(JSON.stringify({ type: 'QUERY', text, appId: GUIDLE_CONFIG.appId }));
       }
     }
 

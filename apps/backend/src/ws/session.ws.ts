@@ -2,17 +2,23 @@ import { parseIntent } from "../intents/parseIntent";
 import { planSteps } from "../planner/planSteps";
 import { registerAppSchema } from "../intents/elementMatcher";
 import { WSClientMessage, WSServerMessage } from "../protocol/messages";
+import { analyzeScreenshot } from "../vision/analyzeScreenshot";
 
 export function handleSession(ws: any) {
   console.log("[Guidle] New session connected");
 
-  ws.on("message", (data: Buffer) => {
+  ws.on("message", async (data: Buffer) => {
     try {
-      const message: WSClientMessage = JSON.parse(data.toString());
+      const message = JSON.parse(data.toString());
       
       switch (message.type) {
         case "QUERY":
           handleQuery(ws, message.text, message.appId);
+          break;
+        
+        case "VISION_QUERY":
+          // New: Vision-based query with screenshot
+          await handleVisionQuery(ws, message.text, message.screenshot, message.viewport);
           break;
           
         case "REGISTER_SCHEMA":
@@ -21,7 +27,6 @@ export function handleSession(ws: any) {
           break;
           
         case "FEEDBACK":
-          // Store feedback for improving matching (future enhancement)
           console.log(`[Guidle] Feedback received: step=${message.stepId}, success=${message.success}`);
           break;
           
@@ -42,15 +47,12 @@ export function handleSession(ws: any) {
 function handleQuery(ws: any, text: string, appId?: string) {
   console.log(`[Guidle] Query: "${text}" (appId: ${appId || "default"})`);
   
-  // Parse the user's intent
   const intent = parseIntent(text);
   console.log(`[Guidle] Parsed intent:`, intent);
   
-  // Plan the steps to guide the user
   const { steps, description } = planSteps(intent, appId);
   console.log(`[Guidle] Planned ${steps.length} steps for: ${description}`);
   
-  // Send each step to the client
   steps.forEach((step, index) => {
     sendMessage(ws, {
       type: "STEP",
@@ -60,7 +62,6 @@ function handleQuery(ws: any, text: string, appId?: string) {
     });
   });
   
-  // Send completion message
   sendMessage(ws, { 
     type: "DONE", 
     success: true, 
@@ -68,6 +69,67 @@ function handleQuery(ws: any, text: string, appId?: string) {
   });
 }
 
-function sendMessage(ws: any, message: WSServerMessage) {
+async function handleVisionQuery(
+  ws: any, 
+  text: string, 
+  screenshot: string, 
+  viewport: { width: number; height: number }
+) {
+  console.log(`[Guidle] Vision query: "${text}"`);
+  
+  if (!screenshot) {
+    sendMessage(ws, { type: "ERROR", message: "No screenshot provided", code: "NO_SCREENSHOT" });
+    return;
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    console.warn("[Guidle] OPENAI_API_KEY not set, falling back to selector-based matching");
+    handleQuery(ws, text);
+    return;
+  }
+
+  try {
+    const result = await analyzeScreenshot(screenshot, text);
+    
+    if (result.success && result.elements.length > 0) {
+      // Send vision-based highlight step
+      sendMessage(ws, {
+        type: "STEP",
+        step: {
+          type: "VISION_HIGHLIGHT",
+          elements: result.elements.map(el => ({
+            // Convert percentages to actual pixels
+            x: (el.x / 100) * viewport.width,
+            y: (el.y / 100) * viewport.height,
+            width: (el.width / 100) * viewport.width,
+            height: (el.height / 100) * viewport.height,
+            label: el.label,
+            confidence: el.confidence,
+            action: el.action
+          })),
+          explanation: result.explanation
+        },
+        stepIndex: 0,
+        totalSteps: 1
+      });
+      
+      sendMessage(ws, { 
+        type: "DONE", 
+        success: true, 
+        message: result.explanation 
+      });
+    } else {
+      // Fall back to selector-based matching
+      console.log("[Guidle] Vision found nothing, falling back to selectors");
+      handleQuery(ws, text);
+    }
+  } catch (error) {
+    console.error("[Guidle] Vision analysis error:", error);
+    // Fall back to selector-based matching
+    handleQuery(ws, text);
+  }
+}
+
+function sendMessage(ws: any, message: WSServerMessage | any) {
   ws.send(JSON.stringify(message));
 }
